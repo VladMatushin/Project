@@ -1,0 +1,25 @@
+create database project;
+use project;
+create table serials (
+	`name` varchar(40) primary key not null,
+    numberOfSeasons int not null default 1,
+    numberOfEpisodes int not null default 1,
+    sumOfRating int not null default 0,
+    numberOfMarks int not null default 0,
+    numberOfViews int not null default 0
+);
+
+create table users (
+	login varchar(30) primary key not null,
+    `password` varchar(30) not null
+);
+
+create table views (
+ulogin varchar(30),
+sname varchar(40),
+uSesaon int not null default 1,
+uEpisod int not null default 1,
+uRating int not null default 0,
+foreign key (ulogin) references users (login),
+foreign key (sname) references serials (`name`)
+) ;

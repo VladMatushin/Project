@@ -12,7 +12,7 @@ public class Main {
     private static final String noUser = "Войдите в аккаунт чтобы воспользоваться данной функцией";
     private static final String entryMessage = "Чтобы выйти из программы, введите команду exit\n";
     private static final String endInfo = "Чтобы воспользоваться другими функциями, войдите в аккаунт.";
-    private static final String startInfo = "Чтобы войти в аккаунт введите команду Login to \n";
+    private static final String startInfo = "Чтобы войти в аккаунт введите команду Login\n";
     private static final String standardInfo =
             "Чтобы создать аккаунт, введите команду Create user \n" +
             "Чтобы получить информацию о сериале, введите команду Serial info\n" +
@@ -59,7 +59,7 @@ public class Main {
                             System.out.println(startInfo + standardInfo + entryMessage +endInfo);
                         }
                         break;
-                    case ("Login to"):
+                    case ("Login"):
                         if (!logined) {
                             System.out.println("Введите имя пользавателя");
                             inputString = reader.readLine();
@@ -123,9 +123,9 @@ public class Main {
                         }
                         break;
                     case ("All serials"):
-                        System.out.println("Список названий всех сериалов в нашей базе:\n");
+                        System.out.println("Список названий всех сериалов в нашей базе:");
                         for (Serial serial : serials) {
-                            System.out.println(serial.getName() + "\n");
+                            System.out.println(serial.getName());
                         }
                         break;
                     case ("Add new serial"):
@@ -167,25 +167,33 @@ public class Main {
                             }catch (SQLException e){System.out.printf(someError,"ChangeView");}
                             logined = false;
                             user = null;
+                            System.out.println("Вы успешно вышли из аккаунта");
                         }
                         else {System.out.println(noUser);}
                         break;
                     case ("My serials"):
-                        if(logined){user.getViewedSerials();}
+                        if(logined){
+                            ArrayList<Serial> mySerials = user.getMySerials();
+                            for (Serial mySerial:mySerials) {
+                                System.out.println(mySerial.getName());
+                            }
+                        }
                         else {System.out.println(noUser);}
                         break;
                     case ("Start new serial"):
                         if(logined) {
                             System.out.println("Введите название сериала.");
                             inputString = reader.readLine();
+                            if(!user.getViewedSerials().containsKey(inputString)){
                             exist = user.StartNewSerial(inputString, serials);
                             if (exist) {
-                            try {
-                                dbmanager.NewView(user.getLogin(), inputString);
-                            }catch (SQLException e){
-                                System.out.printf(someError,"NewView");
+                                try {
+                                    dbmanager.NewView(user.getLogin(), inputString);
+                                } catch (SQLException e) {
+                                    System.out.printf(someError, "NewView");
+                                }
                             }
-                        }
+                        }else{System.out.println("Вы уже начали просмотр этого сериала");}
                         }
                         else {System.out.println(noUser);}
                         break;
@@ -246,6 +254,7 @@ public class Main {
                             try{
                             dbmanager.ChangeUser(user);
                             }catch (SQLException e){System.out.printf(someError,"password");}
+                            System.out.println("Пароль был успешно изменён");
                         }
                         else {System.out.println(noUser);}
                         break;
